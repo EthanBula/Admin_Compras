@@ -3,3 +3,4 @@ dash_bootstrap_components==2.0.3
 pandas==2.3.1
 plotly==6.1.2
 gunicorn==23.0.0
+pulp==3.3.0
