@@ -200,7 +200,7 @@ def query_gemini_api(prompt: str, model_name: str, api_key: str) -> str:
     }
     data_bytes = json.dumps(payload).encode('utf-8')
     req = urllib.request.Request(url, data=data_bytes, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=12) as response:
+    with urllib.request.urlopen(req, timeout=25) as response:
         result = json.loads(response.read().decode('utf-8'))
         return result['candidates'][0]['content']['parts'][0]['text']
 
