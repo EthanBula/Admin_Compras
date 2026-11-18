@@ -16,7 +16,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import dcc, html, Input, Output
+from agents.explainer_graph import FALLBACK_EXPLANATIONS, get_explanation
 
 # --- Directory Configuration ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -356,6 +357,7 @@ app.layout = html.Div(style={'backgroundColor': '#FFFFFF', 'minHeight': '100vh',
             html.A("Production Plan", href="#production", className="nav-anchor-link", id="nav-btn-production"),
             html.A("Inventory", href="#inventory", className="nav-anchor-link", id="nav-btn-inventory"),
             html.A("Cost Analysis", href="#costs", className="nav-anchor-link", id="nav-btn-costs"),
+            html.A("Strategy Explainer", href="#explainer", className="nav-anchor-link", id="nav-btn-explainer"),
         ])
     ]),
 
@@ -493,6 +495,63 @@ app.layout = html.Div(style={'backgroundColor': '#FFFFFF', 'minHeight': '100vh',
             ])
         ]),
 
+        # SECTION 5: STRATEGY EXPLAINER (LANGGRAPH ORCHESTRATION)
+        html.Section(id="explainer", style={'marginTop': '3.5rem', 'marginBottom': '2rem'}, children=[
+            html.Div(className="section-header-row", children=[
+                html.H2("Strategy Explainer (AI Agent)", className="interactive-title", style={'fontSize': '1.5rem', 'margin': 0}),
+            ]),
+            html.P(
+                "Interactive explanatory agent orchestrated with LangGraph synthesizing the 5 strategic pillars of the supply chain. "
+                "Powered by Gemini 3.5 Flash-Lite (with failover to Gemini 3.1 Flash-Lite and local deterministic engine).",
+                style={'color': COLORS['text_muted'], 'fontSize': '0.98rem', 'marginBottom': '1.5rem', 'maxWidth': '900px'}
+            ),
+            html.Div(className="chart-frame-card", style={'padding': '1.5rem 1.75rem'}, children=[
+                # 1. Five Strategic Pillar Buttons
+                html.Div(className="pillar-btn-container", children=[
+                    html.Button("1. Context & Demand", id="btn-pilar-context", className="pillar-btn", n_clicks=0),
+                    html.Button("2. Constraints & Bottlenecks", id="btn-pilar-constraints", className="pillar-btn", n_clicks=0),
+                    html.Button("3. Mathematical Formulation (LP)", id="btn-pilar-model", className="pillar-btn", n_clicks=0),
+                    html.Button("4. Procurement Decisions", id="btn-pilar-decisions", className="pillar-btn", n_clicks=0),
+                    html.Button("5. Financial Impact & ROI", id="btn-pilar-impact", className="pillar-btn", n_clicks=0),
+                ]),
+                # 2. Chat / Response Window with Loading spinner
+                dcc.Loading(
+                    id="explainer-loading",
+                    type="dot",
+                    color="#0F172A",
+                    children=[
+                        html.Div(id="explainer-response-container", className="explainer-response-card", children=[
+                            # User message bubble (shown when a question or pillar is submitted)
+                            html.Div(id="chat-user-bubble-container", style={'display': 'none'}),
+                            # Agent response block
+                            html.Div(id="chat-agent-bubble-container", children=[
+                                html.Div(className="explainer-header-meta", children=[
+                                    html.H3("Supply Chain Strategy Assistant", id="explainer-topic-title", className="explainer-topic-title"),
+                                    html.Span("⚡ LangGraph Agent", id="explainer-model-badge", className="explainer-model-badge")
+                                ]),
+                                dcc.Markdown(
+                                    id="explainer-markdown-content",
+                                    children="Select one of the 5 strategic pillars above or type a custom question below to start the model analysis.",
+                                    className="explainer-markdown-body"
+                                )
+                            ])
+                        ])
+                    ]
+                ),
+                # 3. Custom Query Input Row (Below the chat / response window)
+                html.Div(className="explainer-query-row", children=[
+                    dcc.Input(
+                        id="explainer-input-query",
+                        type="text",
+                        placeholder="Ask a specific question about the model, costs, constraints, or decisions...",
+                        className="explainer-input",
+                        n_submit=0
+                    ),
+                    html.Button("Ask Agent", id="explainer-submit-btn", className="explainer-submit-btn", n_clicks=0)
+                ])
+            ])
+        ]),
+
         # FOOTER (Créditos con formato centrado y separación clara de palabras)
         html.Footer(className="dashboard-footer", children=[
             html.Div(className="footer-credits-container", children=[
@@ -506,6 +565,159 @@ app.layout = html.Div(style={'backgroundColor': '#FFFFFF', 'minHeight': '100vh',
 
     ])
 ])
+
+# --- Callbacks ---
+@app.callback(
+    Output("chat-user-bubble-container", "children"),
+    Output("chat-user-bubble-container", "style"),
+    Output("explainer-topic-title", "children"),
+    Output("explainer-model-badge", "children"),
+    Output("explainer-markdown-content", "children"),
+    Output("btn-pilar-context", "className"),
+    Output("btn-pilar-constraints", "className"),
+    Output("btn-pilar-model", "className"),
+    Output("btn-pilar-decisions", "className"),
+    Output("btn-pilar-impact", "className"),
+    Output("explainer-input-query", "value"),
+    Input("btn-pilar-context", "n_clicks"),
+    Input("btn-pilar-constraints", "n_clicks"),
+    Input("btn-pilar-model", "n_clicks"),
+    Input("btn-pilar-decisions", "n_clicks"),
+    Input("btn-pilar-impact", "n_clicks"),
+    Input("explainer-submit-btn", "n_clicks"),
+    Input("explainer-input-query", "n_submit"),
+    dash.State("explainer-input-query", "value"),
+    prevent_initial_call=True
+)
+def handle_explainer_interaction(c_ctx, c_con, c_mod, c_dec, c_imp, c_sub, n_sub, query_val):
+    ctx_trigger = dash.callback_context.triggered_id
+    
+    btn_classes = {
+        "btn-pilar-context": "pillar-btn",
+        "btn-pilar-constraints": "pillar-btn",
+        "btn-pilar-model": "pillar-btn",
+        "btn-pilar-decisions": "pillar-btn",
+        "btn-pilar-impact": "pillar-btn",
+    }
+    
+    pillar_labels = {
+        "btn-pilar-context": "1. Context & Demand",
+        "btn-pilar-constraints": "2. Constraints & Bottlenecks",
+        "btn-pilar-model": "3. Mathematical Formulation (LP)",
+        "btn-pilar-decisions": "4. Procurement Decisions",
+        "btn-pilar-impact": "5. Financial Impact & ROI",
+    }
+    
+    topic = "context"
+    explicit_topic = None
+    user_bubble_content = None
+    new_input_val = dash.no_update
+    
+    if ctx_trigger == "btn-pilar-context":
+        topic = "context"
+        explicit_topic = "context"
+        btn_classes["btn-pilar-context"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-context"], className="chat-user-text")
+        ])
+    elif ctx_trigger == "btn-pilar-constraints":
+        topic = "constraints"
+        explicit_topic = "constraints"
+        btn_classes["btn-pilar-constraints"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-constraints"], className="chat-user-text")
+        ])
+    elif ctx_trigger == "btn-pilar-model":
+        topic = "model"
+        explicit_topic = "model"
+        btn_classes["btn-pilar-model"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-model"], className="chat-user-text")
+        ])
+    elif ctx_trigger == "btn-pilar-decisions":
+        topic = "decisions"
+        explicit_topic = "decisions"
+        btn_classes["btn-pilar-decisions"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-decisions"], className="chat-user-text")
+        ])
+    elif ctx_trigger == "btn-pilar-impact":
+        topic = "impact"
+        explicit_topic = "impact"
+        btn_classes["btn-pilar-impact"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-impact"], className="chat-user-text")
+        ])
+    elif ctx_trigger in ("explainer-submit-btn", "explainer-input-query"):
+        if query_val and query_val.strip():
+            cleaned_query = query_val.strip()
+            topic = cleaned_query
+            explicit_topic = None
+            user_bubble_content = html.Div(className="chat-user-message", children=[
+                html.Div(className="chat-user-header", children=[
+                    html.Span("👤 You", className="chat-user-badge"),
+                ]),
+                html.P(f'"{cleaned_query}"', className="chat-user-text")
+            ])
+            new_input_val = ""
+        else:
+            topic = "context"
+            explicit_topic = "context"
+            btn_classes["btn-pilar-context"] = "pillar-btn active"
+            user_bubble_content = html.Div(className="chat-user-message", children=[
+                html.Div(className="chat-user-header", children=[
+                    html.Span("Strategic Pillar", className="chat-user-badge"),
+                ]),
+                html.P(pillar_labels["btn-pilar-context"], className="chat-user-text")
+            ])
+    else:
+        topic = "context"
+        explicit_topic = "context"
+        btn_classes["btn-pilar-context"] = "pillar-btn active"
+        user_bubble_content = html.Div(className="chat-user-message", children=[
+            html.Div(className="chat-user-header", children=[
+                html.Span("Strategic Pillar", className="chat-user-badge"),
+            ]),
+            html.P(pillar_labels["btn-pilar-context"], className="chat-user-text")
+        ])
+
+    result = get_explanation(topic_or_query=topic, explicit_topic=explicit_topic)
+    
+    title = result.get("title", "Strategic Supply Chain Analysis")
+    model_name = result.get("model_used", "Gemini 3.5 Flash-Lite")
+    explanation = result.get("explanation", "")
+    badge_text = f"⚡ {model_name}"
+    
+    bubble_style = {'display': 'block'} if user_bubble_content else {'display': 'none'}
+    
+    return (
+        user_bubble_content,
+        bubble_style,
+        title,
+        badge_text,
+        explanation,
+        btn_classes["btn-pilar-context"],
+        btn_classes["btn-pilar-constraints"],
+        btn_classes["btn-pilar-model"],
+        btn_classes["btn-pilar-decisions"],
+        btn_classes["btn-pilar-impact"],
+        new_input_val
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

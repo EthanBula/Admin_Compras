@@ -116,6 +116,24 @@ def test_dash_app_layout():
     assert 'production' in ids_found, "Missing '#production' section"
     assert 'inventory' in ids_found, "Missing '#inventory' section"
     assert 'costs' in ids_found, "Missing '#costs' section"
+    assert 'explainer' in ids_found, "Missing '#explainer' section"
+    assert 'chat-user-bubble-container' in ids_found, "Missing '#chat-user-bubble-container' in explainer card"
     assert 'machine-scroll-track' in ids_found, "Missing '#machine-scroll-track' element"
     assert 'machine-horizontal-strip' in ids_found, "Missing '#machine-horizontal-strip' element"
     assert 'machine-slide' in classes_found, "Missing '.machine-slide' class"
+
+def test_explainer_agent_pillars():
+    """Verifies that the LangGraph Explainer Agent resolves all 5 pillars and custom queries in English."""
+    from agents.explainer_graph import get_explanation
+    
+    pillars = ['context', 'constraints', 'model', 'decisions', 'impact']
+    for p in pillars:
+        res = get_explanation(p, explicit_topic=p)
+        assert isinstance(res, dict)
+        assert res.get('topic') == p
+        assert len(res.get('explanation', '')) > 50, f"Explanation for {p} should be detailed"
+        assert res.get('model_used') is not None
+
+    # Custom query test
+    custom_res = get_explanation("How much money does adding the 31st sealing machine save?")
+    assert "$938.54" in custom_res.get('explanation', '') or "938" in custom_res.get('explanation', '')

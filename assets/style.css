@@ -145,17 +145,17 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2.25rem;
+  gap: 1.5rem;
 }
 
 /* Enlace de navegación con mayor presencia tipográfica */
 .nav-anchor-link {
-  font-size: 1.45rem;
+  font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   color: var(--text-muted);
   text-decoration: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.15rem;
   position: relative;
   transition: color 0.2s ease;
   cursor: pointer;
@@ -421,4 +421,215 @@ section {
   background-color: #FEF2F2;
   color: #DC2626;
   border: 1px solid #FECACA;
+}
+
+/* 9. Section 5: LangGraph AI Explainer Components */
+.pillar-btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.pillar-btn {
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  background-color: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pillar-btn:hover {
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+  color: var(--brand-burgundy);
+  transform: translateY(-1px);
+}
+
+.pillar-btn.active {
+  background-color: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+}
+
+.explainer-response-card {
+  background-color: #FAFAFA;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  min-height: 140px;
+}
+
+/* User Message bubble in Chat */
+.chat-user-message {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-left: 3.5px solid #0F172A;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.chat-user-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.25rem;
+}
+
+.chat-user-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #334155;
+  background-color: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.chat-user-text {
+  font-size: 0.88rem;
+  color: #0F172A;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.explainer-header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.explainer-topic-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.explainer-model-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 9999px;
+  background-color: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #BFDBFE;
+  letter-spacing: 0.02em;
+}
+
+.explainer-markdown-body {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-main);
+}
+
+.explainer-markdown-body h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.explainer-markdown-body h4 {
+  font-size: 0.90rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.explainer-markdown-body p {
+  margin-bottom: 0.5rem;
+}
+
+.explainer-markdown-body ul, .explainer-markdown-body ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.88rem;
+}
+
+.explainer-markdown-body li {
+  margin-bottom: 0.25rem;
+}
+
+.explainer-markdown-body strong {
+  color: #0F172A;
+  font-weight: 700;
+}
+
+.explainer-placeholder-text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.explainer-query-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.explainer-input {
+  flex: 1;
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  padding: 0.65rem 0.95rem;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #FFFFFF;
+  color: var(--text-main);
+}
+
+.explainer-input:focus {
+  border-color: #0F172A;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+.explainer-submit-btn {
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background-color: #0F172A;
+  border: 1.5px solid #0F172A;
+  border-radius: 8px;
+  padding: 0.65rem 1.35rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.explainer-submit-btn:hover {
+  background-color: var(--brand-burgundy);
+  border-color: var(--brand-burgundy);
+  transform: translateY(-1px);
 }

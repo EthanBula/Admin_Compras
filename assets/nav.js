@@ -5,7 +5,7 @@
 (function() {
     function initScrollSpy() {
         const navLinks = document.querySelectorAll('.nav-anchor-link');
-        const sectionIds = ['procurement', 'production', 'inventory', 'costs'];
+        const sectionIds = ['procurement', 'production', 'inventory', 'costs', 'explainer'];
         const sections = sectionIds.map(id => document.getElementById(id)).filter(el => el !== null);
 
         if (navLinks.length === 0 || sections.length === 0) {
@@ -42,9 +42,9 @@
             const windowHeight = window.innerHeight;
             const docHeight = document.documentElement.scrollHeight;
 
-            // If at the very bottom of the page, activate the last section (costs)
+            // If at the very bottom of the page, activate the last section (explainer)
             if (scrollY + windowHeight >= docHeight - 80) {
-                setActive('costs');
+                setActive('explainer');
                 return;
             }
 

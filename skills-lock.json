@@ -15,6 +15,27 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c"
     },
+    "langchain-build-agent": {
+      "source": "langchain-ai/langchain-skills",
+      "commit": "8883a4a278b5e68d85f0d4a988d84accd246c7f0",
+      "sourceType": "github",
+      "skillPath": "skills/langchain-build-agent/SKILL.md",
+      "computedHash": "7632682b9610a2f51285554b5c0477d621ddafa5e7780ea7177b9ae17380ec6b"
+    },
+    "langgraph-agent-patterns": {
+      "source": "soba-labs/langchain-agent-skills",
+      "commit": "0401f727e736b2fae82e0c4d6e7050c39a2c56a2",
+      "sourceType": "github",
+      "skillPath": "skills/langgraph-agent-patterns/SKILL.md",
+      "computedHash": "a80fccdd6cff046566c7425ce04c869208c91f9629c9d6e2eb9945c4c8c2fc4d"
+    },
+    "langgraph-state-management": {
+      "source": "soba-labs/langchain-agent-skills",
+      "commit": "0401f727e736b2fae82e0c4d6e7050c39a2c56a2",
+      "sourceType": "github",
+      "skillPath": "skills/langgraph-state-management/SKILL.md",
+      "computedHash": "5c3d5e5fd65ed1e96917037dcb7ecedc167031db099b639aa7932cdf5c3a5126"
+    },
     "modern-python": {
       "source": "trailofbits/skills",
       "commit": "149d7b21f4067765b82e67029730b42d228ef4b4",
