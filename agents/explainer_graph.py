@@ -16,7 +16,11 @@ import os
 import json
 import urllib.request
 import urllib.error
-from dotenv import dotenv_values
+
+try:
+    from dotenv import dotenv_values
+except ImportError:
+    dotenv_values = None
 
 from langgraph.graph import StateGraph, START, END
 
@@ -25,13 +29,42 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_FILE = os.path.join(BASE_DIR, '.env')
 
 def get_gemini_api_key() -> Optional[str]:
-    """Retrieves the Gemini API key from .env file or environment variables."""
+    """
+    Retrieves the Gemini API key from:
+    1. OS environment variables (standard for cloud platforms like Render / Heroku)
+    2. Local .env file (for local development)
+    """
+    # 1. Cloud environment variables
+    env_key = os.environ.get('GEMINI_API_KEY') or os.environ.get('GEMINI_API_KEI')
+    if env_key and env_key.strip():
+        return env_key.strip()
+
+    # 2. Local .env file fallback
     if os.path.exists(ENV_FILE):
-        env_vars = dotenv_values(ENV_FILE)
-        key = env_vars.get('GEMINI_API_KEY') or env_vars.get('GEMINI_API_KEI')
-        if key:
-            return key.strip()
-    return os.environ.get('GEMINI_API_KEY') or os.environ.get('GEMINI_API_KEI')
+        if dotenv_values is not None:
+            try:
+                env_vars = dotenv_values(ENV_FILE)
+                key = env_vars.get('GEMINI_API_KEY') or env_vars.get('GEMINI_API_KEI')
+                if key and key.strip():
+                    return key.strip()
+            except Exception:
+                pass
+
+        # Zero-dependency manual parser for .env
+        try:
+            with open(ENV_FILE, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        if k.strip() in ('GEMINI_API_KEY', 'GEMINI_API_KEI'):
+                            clean_val = v.strip().strip("'\"")
+                            if clean_val:
+                                return clean_val
+        except Exception:
+            pass
+
+    return None
 
 SYSTEM_PROMPT = """You are an authoritative, pedagogical Senior Operations Research & Supply Chain Executive explaining the procurement and production planning optimization model developed by Ethan Bula and Cesia Burgos.
 
