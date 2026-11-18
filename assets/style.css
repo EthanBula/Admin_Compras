@@ -1,0 +1,424 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Surface & Base - 100% PURE WHITE */
+  --bg-app: #FFFFFF;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --border-card: #E2E8F0;
+  --border-card-hover: #CBD5E1;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-main: #0F172A;
+  /* Slate 900 */
+  --text-muted: #475569;
+  /* Slate 600 */
+  --text-caption: #64748B;
+  /* Slate 500 */
+
+  /* Identity & Accents */
+  --brand-burgundy: #2E1010;
+  /* Color vinotinto exacto original */
+  --brand-gold: #FFC107;
+  /* Amarillo dorado brillante */
+  --brand-gold-glow: #FFC107;
+
+  /* Data Visualization Palette */
+  --chart-bar-1: #1E293B;
+  --chart-bar-2: #64748B;
+  --chart-bar-3: #94A3B8;
+  --chart-accent: #D4AF37;
+  --chart-capacity: #DC2626;
+}
+
+/* Global Reset & Base - Full Width, Pure White */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: #FFFFFF;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #FFFFFF !important;
+  color: var(--text-main);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+}
+
+/* Offset para el desplazamiento con barra fija */
+section {
+  scroll-margin-top: 80px;
+}
+
+/* 1. Header Superior (Título Principal Arriba de Todo) */
+.top-header-container {
+  width: 100%;
+  text-align: center;
+  padding: 2.5rem 1.5rem 1.25rem 1.5rem;
+  background-color: #FFFFFF;
+}
+
+.main-page-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text-main);
+  margin: 0;
+  transition: color 0.22s ease-in-out;
+  cursor: default;
+}
+
+.main-page-title:hover {
+  color: var(--brand-burgundy) !important;
+}
+
+.interactive-title {
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  transition: color 0.22s ease-in-out;
+  cursor: default;
+  display: inline-block;
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+.interactive-title:hover {
+  color: var(--brand-burgundy) !important;
+}
+
+/* CSS Scroll-Driven Animation: Títulos aumentan/disminuyen de tamaño según la proximidad del scroll */
+@supports (animation-timeline: view()) or (animation-timeline: scroll()) {
+  .interactive-title {
+    view-timeline-name: --title-view;
+    view-timeline-axis: block;
+    animation: scale-title-scroll linear both;
+    animation-timeline: --title-view;
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+@keyframes scale-title-scroll {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+
+  30% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.88);
+    opacity: 0.5;
+  }
+}
+
+/* 2. Barra de Navegación Centrada y Fija */
+.sticky-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--border-card);
+  padding: 0.6rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-links-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.25rem;
+}
+
+/* Enlace de navegación con mayor presencia tipográfica */
+.nav-anchor-link {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  position: relative;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.nav-anchor-link:hover {
+  color: var(--brand-burgundy) !important;
+  background: transparent !important;
+}
+
+.nav-anchor-link.active {
+  color: var(--text-main) !important;
+  font-weight: 800 !important;
+  background: transparent !important;
+}
+
+/* La línea amarilla debajo del elemento seleccionado que se ilumina con resplandor */
+.nav-anchor-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 4.5px;
+  background-color: transparent;
+  border-radius: 4px;
+  transition: all 0.22s ease-in-out;
+}
+
+.nav-anchor-link:hover::after {
+  background-color: rgba(255, 193, 7, 0.45);
+}
+
+.nav-anchor-link.active::after {
+  background-color: #FFC107 !important;
+  box-shadow: 0 0 12px #FFC107, 0 0 24px #FFD54F, 0 2px 10px rgba(212, 175, 55, 0.95) !important;
+}
+
+/* 3. Contenedor de Página Fluido */
+.fluid-page-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 2rem 3rem 4rem 3rem;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .fluid-page-container {
+    padding: 1rem 1rem 3rem 1rem;
+  }
+}
+
+/* 4. Marcos de Gráficas y Contenedores */
+.chart-frame-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--border-card);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.chart-frame-card:hover {
+  border-color: var(--border-card-hover);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.section-header-row {
+  margin-bottom: 1.25rem;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1.5px solid #F1F5F9;
+}
+
+.subsection-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: center;
+  margin: 1.5rem 0 1rem 0;
+  letter-spacing: -0.01em;
+}
+
+/* 5. Cajas de Análisis / Explicación */
+.insight-box {
+  background-color: #FAFAFA;
+  border: 1px solid var(--border-card);
+  border-left: 4px solid #D4AF37;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.35rem;
+  margin-top: 1.25rem;
+}
+
+.insight-text {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  text-align: left;
+  margin: 0;
+}
+
+.insight-text strong {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* 6. Línea divisoria elegante */
+.gold-divider {
+  border: none;
+  border-top: 1.5px solid rgba(212, 175, 55, 0.4);
+  margin: 2.5rem 0;
+}
+
+/* 7. Footer */
+.dashboard-footer {
+  text-align: center;
+  padding: 2.75rem 1rem 2.25rem 1rem;
+  border-top: 1.5px solid var(--border-card);
+  margin-top: 4rem;
+  background-color: #FFFFFF;
+}
+
+.footer-credits-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.25rem;
+  flex-wrap: wrap;
+}
+
+.footer-word {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: 0.15em;
+  transition: color 0.22s ease-in-out;
+  cursor: default;
+}
+
+.footer-ampersand {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--text-caption);
+  transition: color 0.22s ease-in-out;
+  cursor: default;
+}
+
+.footer-credits-container:hover .footer-word,
+.footer-credits-container:hover .footer-ampersand {
+  color: var(--brand-burgundy) !important;
+}
+
+/* 8. Sticky Horizontal Scroll Section (CSS Scroll-Driven Animations) */
+.machine-scroll-track {
+  height: 350vh;
+  view-timeline-name: --machine-track;
+  view-timeline-axis: block;
+  position: relative;
+  width: 100%;
+  margin: 2rem 0 2.5rem 0;
+}
+
+.machine-sticky-viewport {
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 100px);
+  min-height: 560px;
+  max-height: 740px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  padding: 0.5rem 0;
+}
+
+.machine-sticky-header {
+  text-align: center;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.machine-scroll-hint {
+  font-size: 0.85rem;
+  color: var(--text-caption);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.machine-horizontal-strip {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 400%;
+  flex: 1;
+  will-change: transform;
+}
+
+/* CSS Scroll-Driven Animations: Native Compositor Thread Execution */
+@supports (animation-timeline: view()) or (animation-timeline: scroll()) {
+  .machine-horizontal-strip {
+    animation: slide-machines-timeline linear both;
+    animation-timeline: --machine-track;
+    animation-range: entry 100% exit 0%;
+  }
+}
+
+@keyframes slide-machines-timeline {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(-75%);
+  }
+}
+
+.machine-slide {
+  width: 25%;
+  flex: 0 0 25%;
+  height: 100%;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.machine-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 0 !important;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.machine-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.28rem 0.75rem;
+  border-radius: 9999px;
+  background-color: #F1F5F9;
+  color: #475569;
+  margin-bottom: 0.4rem;
+  align-self: flex-start;
+}
+
+.machine-badge.bottleneck {
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
